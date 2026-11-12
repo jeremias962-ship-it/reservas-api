@@ -1,18 +1,16 @@
 # Reservas API
 
-API RESTful para gestão de reservas desenvolvida com Node.js, Express e PostgreSQL.
+API RESTful para gerenciamento de reservas desenvolvida com Node.js, Express e PostgreSQL (Neon).
 
-## 🛠️ Tecnologias Utilizadas
+## Tecnologias
 
-- **Node.js** & **Express**
-- **PostgreSQL** (Hospedado no Neon Database)
-- **pg** (Driver oficial de conexão PostgreSQL)
-- **dotenv** & **cors**
-- **Nodemon** (Ambiente de desenvolvimento)
+- Node.js & Express
+- PostgreSQL (`pg`)
+- Dotenv & CORS
 
-## 🚀 Como Executar o Projeto
+## Como executar localmente
 
-1. Clone o repositório:
+1. Instale as dependências:
    ```bash
-   git clone <URL_DO_REPOSITORIO>
+   npm install
    ```

@@ -1,19 +1,16 @@
 const ReservaModel = require("../models/reservaModel");
 
 const ReservaController = {
-  // Listar todas as reservas
-  listar: async (req, res) => {
+  listarTodas: async (req, res, next) => {
     try {
       const reservas = await ReservaModel.buscarTodas();
-      return res.json(reservas);
+      res.status(200).json(reservas);
     } catch (error) {
-      console.error(error);
-      return res.status(500).json({ error: "Erro ao buscar reservas." });
+      next(error);
     }
   },
 
-  // Buscar reserva por ID
-  buscarPorId: async (req, res) => {
+  buscarPorId: async (req, res, next) => {
     try {
       const { id } = req.params;
       const reserva = await ReservaModel.buscarPorId(id);
@@ -22,15 +19,13 @@ const ReservaController = {
         return res.status(404).json({ error: "Reserva não encontrada." });
       }
 
-      return res.json(reserva);
+      res.status(200).json(reserva);
     } catch (error) {
-      console.error(error);
-      return res.status(500).json({ error: "Erro ao buscar reserva." });
+      next(error);
     }
   },
 
-  // Criar nova reserva
-  criar: async (req, res) => {
+  criar: async (req, res, next) => {
     try {
       const { nome_cliente, data_reserva, hora_reserva, numero_pessoas } =
         req.body;
@@ -48,18 +43,13 @@ const ReservaController = {
         numero_pessoas,
       });
 
-      return res.status(201).json({
-        message: "Reserva criada com sucesso!",
-        reserva: novaReserva,
-      });
+      res.status(201).json(novaReserva);
     } catch (error) {
-      console.error(error);
-      return res.status(500).json({ error: "Erro ao criar reserva." });
+      next(error);
     }
   },
 
-  // Atualizar reserva
-  atualizar: async (req, res) => {
+  atualizar: async (req, res, next) => {
     try {
       const { id } = req.params;
       const { nome_cliente, data_reserva, hora_reserva, numero_pessoas } =
@@ -68,9 +58,7 @@ const ReservaController = {
       if (!nome_cliente || !data_reserva || !hora_reserva || !numero_pessoas) {
         return res
           .status(400)
-          .json({
-            error: "Todos os campos são obrigatórios para a atualização.",
-          });
+          .json({ error: "Todos os campos são obrigatórios." });
       }
 
       const reservaAtualizada = await ReservaModel.atualizar(id, {
@@ -81,40 +69,33 @@ const ReservaController = {
       });
 
       if (!reservaAtualizada) {
-        return res
-          .status(404)
-          .json({ error: "Reserva não encontrada para atualizar." });
+        return res.status(404).json({ error: "Reserva não encontrada." });
       }
 
-      return res.json({
+      res.status(200).json({
         message: "Reserva atualizada com sucesso!",
         reserva: reservaAtualizada,
       });
     } catch (error) {
-      console.error(error);
-      return res.status(500).json({ error: "Erro ao atualizar reserva." });
+      next(error);
     }
   },
 
-  // Deletar reserva
-  deletar: async (req, res) => {
+  deletar: async (req, res, next) => {
     try {
       const { id } = req.params;
       const reservaDeletada = await ReservaModel.deletar(id);
 
       if (!reservaDeletada) {
-        return res
-          .status(404)
-          .json({ error: "Reserva não encontrada para deletar." });
+        return res.status(404).json({ error: "Reserva não encontrada." });
       }
 
-      return res.json({
+      res.status(200).json({
         message: "Reserva deletada com sucesso!",
         reserva: reservaDeletada,
       });
     } catch (error) {
-      console.error(error);
-      return res.status(500).json({ error: "Erro ao deletar reserva." });
+      next(error);
     }
   },
 };

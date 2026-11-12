@@ -1,33 +1,22 @@
 const express = require("express");
 const cors = require("cors");
-const db = require("./config/database");
-const reservaRoutes = require("./routes/reservaRoutes");
 require("dotenv").config();
 
+const reservaRoutes = require("./routes/reservaRoutes");
+const errorHandler = require("./middlewares/errorHandler"); // 1. Importe aqui
+
 const app = express();
-const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
 
-// Rota de teste (health check)
-app.get("/api/health", async (req, res) => {
-  try {
-    const result = await db.query("SELECT NOW()");
-    res.json({
-      status: "online",
-      message: "Reservas API running smoothly!",
-      database_time: result.rows[0].now,
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Database connection error" });
-  }
-});
+// Rotas da API
+app.use("/api/reservas", reservaRoutes);
 
-// Registar as rotas da aplicação
-app.use("/api", reservaRoutes);
+// 2. Registre o middleware global DEPOIS de todas as rotas
+app.use(errorHandler);
 
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
