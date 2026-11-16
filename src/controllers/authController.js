@@ -1,4 +1,5 @@
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 const UserModel = require("../models/userModel");
 
 const AuthController = {
@@ -6,14 +7,12 @@ const AuthController = {
     try {
       const { nome, email, senha } = req.body;
 
-      // Validação básica de campos obrigatórios
       if (!nome || !email || !senha) {
         return res
           .status(400)
           .json({ error: "Nome, email e senha são obrigatórios." });
       }
 
-      // Verificar se o email já está cadastrado
       const usuarioExistente = await UserModel.buscarPorEmail(email);
       if (usuarioExistente) {
         return res
@@ -21,11 +20,9 @@ const AuthController = {
           .json({ error: "Este e-mail já está cadastrado." });
       }
 
-      // Gerar o hash da senha (custo de 10 rodadas)
       const salt = await bcrypt.genSalt(10);
       const senhaHash = await bcrypt.hash(senha, salt);
 
-      // Criar o utilizador no banco de dados
       const novoUsuario = await UserModel.criar({
         nome,
         email,
@@ -35,6 +32,44 @@ const AuthController = {
       return res.status(201).json({
         message: "Utilizador cadastrado com sucesso!",
         usuario: novoUsuario,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  async login(req, res, next) {
+    try {
+      const { email, senha } = req.body;
+
+      if (!email || !senha) {
+        return res
+          .status(400)
+          .json({ error: "Email e senha são obrigatórios." });
+      }
+
+      // 1. Buscar o usuário pelo email
+      const usuario = await UserModel.buscarPorEmail(email);
+      if (!usuario) {
+        return res.status(401).json({ error: "Credenciais inválidas." });
+      }
+
+      // 2. Comparar a senha enviada com o hash salvo no banco
+      const senhaValida = await bcrypt.compare(senha, usuario.senha);
+      if (!senhaValida) {
+        return res.status(401).json({ error: "Credenciais inválidas." });
+      }
+
+      // 3. Gerar o Token JWT (válido por 1 dia)
+      const token = jwt.sign(
+        { id: usuario.id, email: usuario.email },
+        process.env.JWT_SECRET,
+        { expiresIn: "1d" },
+      );
+
+      return res.status(200).json({
+        message: "Login realizado com sucesso!",
+        token,
       });
     } catch (error) {
       next(error);
