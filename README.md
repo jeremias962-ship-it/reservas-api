@@ -6,6 +6,8 @@ API RESTful para gerenciamento de reservas desenvolvida com Node.js, Express e P
 
 - Node.js & Express
 - PostgreSQL (`pg`)
+- JSON Web Token (JWT) para autenticação
+- Bcrypt (para hash de senhas)
 - Dotenv & CORS
 
 ## Como executar localmente
