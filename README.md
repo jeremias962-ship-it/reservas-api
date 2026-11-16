@@ -16,3 +16,19 @@ API RESTful para gerenciamento de reservas desenvolvida com Node.js, Express e P
    ```bash
    npm install
    ```
+
+## Sprint 2 - Auth, Segurança & Error Handler
+
+**O que foi bom:**
+
+- Implementação do JWT e middleware de proteção funcionou perfeitamente.
+- A estrutura de pastas ficou muito organizada.
+
+**O que travou:**
+
+- Tivemos dificuldade inicial com a conexão do banco Neon (erro de senha). Foi resolvido ao reiniciar o servidor e ajustar o `.env`.
+- O README ficou um pouco incompleto no commit, precisamos revisar na próxima.
+
+**Próximos passos:**
+
+- Iniciar a Sprint 3: Testes automatizados com Jest + Supertest.
