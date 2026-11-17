@@ -1,5 +1,9 @@
 # Reservas API
 
+## 🌐 API em Produção
+
+A API está publicada e pode ser acessada em: [https://reservas-api-37lj.onrender.com](https://reservas-api-37lj.onrender.com)
+
 API RESTful para gerenciamento de reservas desenvolvida com Node.js, Express e PostgreSQL (Neon).
 
 ## Tecnologias
