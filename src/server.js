@@ -1,21 +1,21 @@
 const express = require("express");
 const cors = require("cors");
+const swaggerUi = require("swagger-ui-express");
+const swaggerDocument = require("./config/swagger");
 require("dotenv").config();
 
-// Se o banco estiver em src/config/database.js:
 const pool = require("./config/database");
-
-// Se as rotas estiverem em src/routes/:
 const authRoutes = require("./routes/authRoutes");
 const reservaRoutes = require("./routes/reservaRoutes");
-
-// Se os middlewares estiverem em src/middlewares/:
 const errorHandler = require("./middlewares/errorHandler");
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+
+// Documentação Interativa Swagger
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Rotas
 app.use("/api/auth", authRoutes);
