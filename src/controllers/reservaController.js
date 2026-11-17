@@ -1,5 +1,22 @@
 const ReservaModel = require("../models/reservaModel");
 
+function validarDadosReserva({ nome_cliente, data_reserva, hora_reserva, numero_pessoas }) {
+  if (!nome_cliente || !data_reserva || !hora_reserva || numero_pessoas === undefined || numero_pessoas === null) {
+    return "Todos os campos são obrigatórios.";
+  }
+
+  if (Number(numero_pessoas) <= 0 || !Number.isInteger(Number(numero_pessoas))) {
+    return "O número de pessoas deve ser um número inteiro maior que zero.";
+  }
+
+  const hoje = new Date().toISOString().split("T")[0];
+  if (data_reserva < hoje) {
+    return "Não é possível agendar uma reserva para uma data no passado.";
+  }
+
+  return null;
+}
+
 const ReservaController = {
   listarTodas: async (req, res, next) => {
     try {
@@ -27,13 +44,11 @@ const ReservaController = {
 
   criar: async (req, res, next) => {
     try {
-      const { nome_cliente, data_reserva, hora_reserva, numero_pessoas } =
-        req.body;
+      const { nome_cliente, data_reserva, hora_reserva, numero_pessoas } = req.body;
 
-      if (!nome_cliente || !data_reserva || !hora_reserva || !numero_pessoas) {
-        return res
-          .status(400)
-          .json({ error: "Todos os campos são obrigatórios." });
+      const erroValidacao = validarDadosReserva({ nome_cliente, data_reserva, hora_reserva, numero_pessoas });
+      if (erroValidacao) {
+        return res.status(400).json({ error: erroValidacao });
       }
 
       const novaReserva = await ReservaModel.criar({
@@ -52,13 +67,11 @@ const ReservaController = {
   atualizar: async (req, res, next) => {
     try {
       const { id } = req.params;
-      const { nome_cliente, data_reserva, hora_reserva, numero_pessoas } =
-        req.body;
+      const { nome_cliente, data_reserva, hora_reserva, numero_pessoas } = req.body;
 
-      if (!nome_cliente || !data_reserva || !hora_reserva || !numero_pessoas) {
-        return res
-          .status(400)
-          .json({ error: "Todos os campos são obrigatórios." });
+      const erroValidacao = validarDadosReserva({ nome_cliente, data_reserva, hora_reserva, numero_pessoas });
+      if (erroValidacao) {
+        return res.status(400).json({ error: erroValidacao });
       }
 
       const reservaAtualizada = await ReservaModel.atualizar(id, {

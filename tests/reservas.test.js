@@ -6,7 +6,6 @@ describe("Testes de Integração - CRUD de Reservas", () => {
   let token;
   let reservaId;
 
-  // Antes de rodar os testes, faz login para obter um Token JWT válido
   beforeAll(async () => {
     const res = await request(app)
       .post("/api/auth/login")
@@ -26,6 +25,36 @@ describe("Testes de Integração - CRUD de Reservas", () => {
 
     expect(res.status).toBe(400);
     expect(res.body.error).toBe("Todos os campos são obrigatórios.");
+  });
+
+  it("Deve retornar 400 ao tentar criar reserva com número de pessoas inválido (0)", async () => {
+    const res = await request(app)
+      .post("/api/reservas")
+      .set("Authorization", `Bearer ${token}`)
+      .send({
+        nome_cliente: "Cliente Zero Pessoas",
+        data_reserva: "2026-12-25",
+        hora_reserva: "20:00",
+        numero_pessoas: 0,
+      });
+
+    expect(res.status).toBe(400);
+    expect(res.body.error).toBe("O número de pessoas deve ser um número inteiro maior que zero.");
+  });
+
+  it("Deve retornar 400 ao tentar criar reserva em data passada", async () => {
+    const res = await request(app)
+      .post("/api/reservas")
+      .set("Authorization", `Bearer ${token}`)
+      .send({
+        nome_cliente: "Cliente Viajante do Tempo",
+        data_reserva: "2020-01-01",
+        hora_reserva: "20:00",
+        numero_pessoas: 2,
+      });
+
+    expect(res.status).toBe(400);
+    expect(res.body.error).toBe("Não é possível agendar uma reserva para uma data no passado.");
   });
 
   it("Deve criar uma nova reserva com sucesso (201)", async () => {
